@@ -1,0 +1,135 @@
+{
+  "activity": {
+    "type": "Copy",
+    "typeProperties": {
+      "source": {
+        "type": "DelimitedTextSource",
+        "storeSettings": {
+          "type": "AzureBlobStorageReadSettings",
+          "recursive": true
+        },
+        "formatSettings": {
+          "type": "DelimitedTextReadSettings"
+        }
+      },
+      "sink": {
+        "type": "DelimitedTextSink",
+        "storeSettings": {
+          "type": "AzureBlobStorageWriteSettings",
+          "recursive": true
+        },
+        "formatSettings": {
+          "type": "DelimitedTextWriteSettings"
+        }
+      }
+    },
+    "name": "CopyBlobToBlob_IRSharing_Lineage",
+    "inputs": [
+      {
+        "referenceName": "SourceBlobDataset",
+        "type": "DatasetReference"
+      }
+    ],
+    "outputs": [
+      {
+        "referenceName": "SinkBlobDataset",
+        "type": "DatasetReference"
+      }
+    ]
+  },
+  "datasets": [
+    {
+      "properties": {
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "gender=female/co=CN/A1.csv",
+            "folderPath": "testpartitiondiscovery/csvtest/",
+            "container": "querytest"
+          },
+          "recursive": "true",
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\"",
+          "enableFolderFilter": true
+        },
+        "linkedServiceName": {
+          "referenceName": "AzureBlobLinkedService",
+          "type": "LinkedServiceReference"
+        }
+      },
+      "name": "SourceBlobDataset"
+    },
+    {
+      "properties": {
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "folderPath": "sink/lineage/",
+            "fileName": "IRSharingLineageTest.csv",
+            "container": "copyv2test"
+          },
+          "recursive": "true",
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\"",
+          "enableFolderFilter": true
+        },
+        "linkedServiceName": {
+          "referenceName": "AzureBlobLinkedService",
+          "type": "LinkedServiceReference"
+        }
+      },
+      "name": "SinkBlobDataset"
+    }
+  ],
+  "linkedServices": [
+    {
+      "properties": {
+        "type": "AzureStorage",
+        "typeProperties": {
+          "connectionString": {
+            "type": "SecureString",
+            "value": "DefaultEndpointsProtocol=https;AccountName=transferserviceonebox;AccountKey=$(DPG/IS/DataTransfer/DataSourceTest/TestConstants/AzureStorageConnection)"
+          }
+        },
+        "connectVia": {
+          "referenceName": "{LinkedIntegrationRunitmeName}",
+          "type": "IntegrationRuntimeReference"
+        }
+      },
+      "name": "AzureBlobLinkedService"
+    }
+  ],
+  "integrationRuntimes": [
+    {
+      "name": "{LinkedIntegrationRunitmeName}",
+      "properties": {
+        "type": "SelfHosted",
+        "typeProperties": {
+          "linkedInfo": {
+            "authorizationType": "Key",
+            "key": {
+              "type": "SecureString",
+              "value": "{IntegrationRuntimeAuthKey}"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "executioncontext": {
+    "DataFactoryExecutorIdentifier": "StatefulController_ExecutorV2",
+    "datafactoryname": "{LinkedDataFactoryName}",
+    "datafactoryregionabbreviation": "{LinkedDataFactoryRegion}",
+    "datafactoryid": "{LinkedDataFactoryId}",
+    "pipelinename": "PipelineBlobToBlob_IRSharing_Lineage",
+    "purviewConfiguration": {
+      "purviewResourceId": "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/testRg/providers/Microsoft.Purview/accounts/copylineagetestdogfoodV2"
+    }
+  }
+}
